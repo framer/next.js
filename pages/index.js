@@ -2,6 +2,11 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
+// import VercelButton from "https://framer.com/m/VercelButton-YAlC.js";
+import Button from "https://framer.com/m/Button-7vAQ.js@9djRLPbFLMXwzcfFFyKm"
+import clamp from "https://unpkg.com/lodash-es@4.17.21/clamp.js";
+console.log({clamp})
+
 export default function Home() {
   return (
     <div className={styles.container}>
@@ -12,6 +17,8 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        {/*<VercelButton/>*/}
+        <Button/>
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
