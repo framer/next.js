@@ -1,7 +1,5 @@
 import '../styles/globals.css'
-
-globalThis.navigator ??= { userAgent: "" }
-globalThis.window ??= globalThis
+import '../utils/framerHacks.js'
 
 function MyApp({ Component, pageProps }) {
   return <Component {...pageProps} />

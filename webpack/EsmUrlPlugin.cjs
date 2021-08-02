@@ -70,12 +70,15 @@ class EsmUrlPlugin {
 
                     if (needsRelativeResolution(request.request)) {
                         request.path = new URL(request.request, baseUrl).href
+
                         return resolver.doResolve(target, request, null, resolveContext, callback);
                     }
 
                     if (!parseUrl(request.request)) {
                         // We are dealing with a bare module specifier.
+                        // Resolve it starting from the roots of the project.
                         request.path = require.resolve(request.request, { paths: Array.from(resolver.options.roots) })
+
                         return resolver.doResolve(target, request, null, resolveContext, callback);
                     }
 
@@ -89,7 +92,7 @@ module.exports = EsmUrlPlugin;
 
 function needsRelativeResolution(path) {
     // Relative paths, absolute paths and protocol-relative URLs need resolution against the issuer URL.
-    return path.startsWith('.') || path.startsWith('/')
+    return path.startsWith('.') || path.startsWith('/') || path.startsWith("assets/") // FIXME: this is a Framer hack
 }
 
 function parseUrl(maybeURL) {
