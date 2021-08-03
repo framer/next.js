@@ -4,8 +4,8 @@ import styles from '../styles/Home.module.css'
 
 // Smart components
 // import VercelButton from "https://framer.com/m/VercelButton-YAlC.js";
-// import Hero from "https://framer.com/m/Carousel-K4xp.js"
-import Hero from "https://framerusercontent.com/modules/oAIH4mJYirnv3yiamFCy/Ngp0r25dJiSrUBitTI8U/YWpZD78b2.js"
+import Hero from "https://framer.com/m/Carousel-K4xp.js"
+// import Hero from "https://framerusercontent.com/modules/oAIH4mJYirnv3yiamFCy/Ngp0r25dJiSrUBitTI8U/YWpZD78b2.js"
 // Code component
 // import Button from "https://framer.com/m/Button-7vAQ.js@9djRLPbFLMXwzcfFFyKm"
 

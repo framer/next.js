@@ -17,12 +17,27 @@ class EsmUrlPlugin {
             (compilation, { normalModuleFactory }) => {
                 normalModuleFactory.hooks.resolveForScheme
                     .for("https")
-                    .tap("EsmUrlPlugin", resourceData => {
+                    .tapAsync("EsmUrlPlugin", (resourceData, resolveContext ,callback) => {
                         const url = new URL(resourceData.resource);
-                        resourceData.path = url.origin + url.pathname;
-                        resourceData.query = url.search;
-                        resourceData.fragment = url.hash;
-                        return /** @type {true} */ (true);
+
+                        const { https } = require('follow-redirects');
+                        https.get(url, { maxRedirects: 10 }, res => {
+                            if (res.statusCode !== 200) {
+                                res.destroy();
+                                return callback(
+                                    new Error(`https request status code = ${res.statusCode}`)
+                                );
+                            }
+
+                            const finalUrl = new URL(res.responseUrl)
+                            resourceData.path = finalUrl.origin + finalUrl.pathname;
+                            resourceData.query = finalUrl.search;
+                            resourceData.fragment = finalUrl.hash;
+
+                            return callback();
+                        })
+
+                        // return /** @type {true} */ (true);
                     });
                 webpack.NormalModule.getCompilationHooks(compilation)
                     .readResourceForScheme.for("https")
