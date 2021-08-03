@@ -1318,11 +1318,7 @@ framer-motion@^4.1.17:
   optionalDependencies:
     "@emotion/is-prop-valid" "^0.8.2"
 
-<<<<<<< HEAD
 framer@^1.3.7-alpha.3:
-=======
-framer@1.3.7-alpha.3:
->>>>>>> d932e2a (Fix assets rule)
   version "1.3.7-alpha.3"
   resolved "https://registry.yarnpkg.com/framer/-/framer-1.3.7-alpha.3.tgz#93d022b5c966e1cefb57e4133c21405b34f8f654"
   integrity sha512-eWVYkCtZt4I48fDc4UW2+6W4S79WYa/eXrQkX5OKuuU1UvHS+V1o7/U5HltSEbryvv6C5QvYYCVxvvbNtetnPg==
