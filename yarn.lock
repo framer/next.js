@@ -1318,10 +1318,10 @@ framer-motion@^4.1.17:
   optionalDependencies:
     "@emotion/is-prop-valid" "^0.8.2"
 
-framer@1.3.7-alpha.2:
-  version "1.3.7-alpha.2"
-  resolved "https://registry.yarnpkg.com/framer/-/framer-1.3.7-alpha.2.tgz#160d9f19d629e50fcc59ace27284e30e12dccb57"
-  integrity sha512-CmU8YPfP6hQtrANE4nMlW+5At7jdl2HZGo3F3m4wAM3QCaywOKcJtIPJAS15eseXJou55HOFvIlL4os1MYnWWA==
+framer@^1.3.7-alpha.3:
+  version "1.3.7-alpha.3"
+  resolved "https://registry.yarnpkg.com/framer/-/framer-1.3.7-alpha.3.tgz#93d022b5c966e1cefb57e4133c21405b34f8f654"
+  integrity sha512-eWVYkCtZt4I48fDc4UW2+6W4S79WYa/eXrQkX5OKuuU1UvHS+V1o7/U5HltSEbryvv6C5QvYYCVxvvbNtetnPg==
 
 framesync@5.3.0:
   version "5.3.0"

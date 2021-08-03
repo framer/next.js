@@ -15,6 +15,29 @@ a {
     box-sizing: border-box;
 }
 
+.home > *,
+.home > * > * {
+    width: 100% !important;
+}
+
+.header h1 {
+    height: auto; /* 241px */
+    flex-shrink: 0;
+    width: 990px;
+    overflow: visible;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
+    font-family: "GT Walsheim Bold", serif;
+    color: #ffffff;
+    font-size: 68px;
+    letter-spacing: -2.5px;
+    line-height: 1.1;
+    text-align: center;
+}
+
+/* Fonts */
+
 @font-face {
     font-display: swap;
     font-family: GT Walsheim;
