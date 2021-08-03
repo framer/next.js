@@ -5,6 +5,11 @@ const webpack = require("webpack");
 
 /** @typedef {webpack.Compiler} Compiler */
 
+// We'll cache redirected URLs to ensure relative paths are resolved correctly.
+// TODO: Make sure Webpack gives us the final URL, not the initial one.
+/** @type {Record<string, URL>} */
+const redirectCache = {}
+
 class EsmUrlPlugin {
     /**
      * Apply the plugin
@@ -17,7 +22,7 @@ class EsmUrlPlugin {
             (compilation, { normalModuleFactory }) => {
                 normalModuleFactory.hooks.resolveForScheme
                     .for("https")
-                    .tapAsync("EsmUrlPlugin", (resourceData, resolveContext ,callback) => {
+                    .tapAsync("EsmUrlPlugin", (resourceData, resolveContext, callback) => {
                         const url = new URL(resourceData.resource);
 
                         const { https } = require('follow-redirects');
@@ -33,6 +38,9 @@ class EsmUrlPlugin {
                             resourceData.path = finalUrl.origin + finalUrl.pathname;
                             resourceData.query = finalUrl.search;
                             resourceData.fragment = finalUrl.hash;
+                            if (finalUrl.href !== url.href) {
+                                redirectCache[url.href] = finalUrl
+                            }
 
                             return callback();
                         })
@@ -78,10 +86,11 @@ class EsmUrlPlugin {
                 const target = resolver.ensureHook("resolved");
 
                 resolver.hooks.resolve.tapAsync('EsmUrlPlugin', (request, resolveContext, callback) => {
-                    const baseUrl = parseUrl(request.context.issuer);
-
+                    let baseUrl = parseUrl(request.context.issuer);
                     // If the issuer module is not a URL module, skip.
                     if (!baseUrl) return callback();
+
+                    baseUrl = redirectCache[baseUrl.href] || baseUrl
 
                     if (needsRelativeResolution(request.request)) {
                         request.path = new URL(request.request, baseUrl).href
