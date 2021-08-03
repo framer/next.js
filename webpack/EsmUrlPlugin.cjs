@@ -10,7 +10,7 @@ const webpack = require("webpack")
 /** @type {Record<string, Promise<CachedResponse>>} */
 const cache = {}
 
-/** @type {Record<string, string>} */
+/** @type {Record<string, URL>} */
 const redirectCache = {}
 
 /**
