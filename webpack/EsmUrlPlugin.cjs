@@ -5,10 +5,53 @@ const webpack = require("webpack")
 
 /** @typedef {webpack.Compiler} Compiler */
 
-// We'll cache redirected URLs to ensure relative paths are resolved correctly.
-// TODO: Make sure Webpack gives us the final URL, not the initial one.
-/** @type {Record<string, URL>} */
+/** @typedef {{ url: string; data: Buffer }} CachedResponse */
+
+/** @type {Record<string, Promise<CachedResponse>>} */
+const cache = {}
+
+/** @type {Record<string, string>} */
 const redirectCache = {}
+
+/**
+ * @param url {string}
+ * @returns {Promise<CachedResponse>}
+ */
+async function get(url) {
+    if (cache[url]) {
+        console.log("cache", url)
+        return cache[url]
+    }
+    console.log("get", url)
+    const promise = new Promise((resolve, reject) => {
+        const { https } = require("follow-redirects")
+        https.get(url, response => {
+            if (response.statusCode !== 200) {
+                reject(Error(`Request for ${url} failed with status code ${response.statusCode}`))
+                return
+            }
+            if (!cache[response.responseUrl]) {
+                // Requests for the final URL should result in the same response.
+                cache[response.responseUrl] = promise
+            }
+            const chunks = []
+            response.on("data", chunk => {
+                chunks.push(chunk)
+            })
+            response.on("end", () => {
+                if (!response.complete) {
+                    reject(Error(`Request for ${url} failed to complete`))
+                    return
+                }
+                // Store a simpler cache version for relative path resolution use only.
+                redirectCache[url] = new URL(response.responseUrl)
+                resolve({ url: response.responseUrl, data: Buffer.concat(chunks) })
+            })
+        })
+    })
+    cache[url] = promise
+    return promise
+}
 
 class EsmUrlPlugin {
     /**
@@ -25,70 +68,29 @@ class EsmUrlPlugin {
                     .tapAsync(
                         "EsmUrlPlugin",
                         (resourceData, resolveContext, callback) => {
-                            const url = new URL(resourceData.resource)
-
-                            const { https } = require("follow-redirects")
-                            https.get(url, { maxRedirects: 10 }, (res) => {
-                                if (res.statusCode !== 200) {
-                                    res.destroy()
-                                    return callback(
-                                        new Error(
-                                            `https request status code = ${res.statusCode}`
-                                        )
-                                    )
-                                }
-
-                                const finalUrl = new URL(res.responseUrl)
-                                resourceData.path =
-                                    finalUrl.origin + finalUrl.pathname
-                                resourceData.query = finalUrl.search
-                                resourceData.fragment = finalUrl.hash
-                                if (finalUrl.href !== url.href) {
-                                    redirectCache[url.href] = finalUrl
-                                }
-
-                                return callback()
-                            })
-
-                            // return /** @type {true} */ (true);
+                            get(resourceData.resource)
+                                .then(({ url: href }) => {
+                                    const url = new URL(href)
+                                    resourceData.path = url.origin + url.pathname
+                                    resourceData.query = url.search
+                                    resourceData.fragment = url.hash
+                                    callback()
+                                })
+                                .catch(error => {
+                                    callback(error)
+                                })
                         }
                     )
                 webpack.NormalModule.getCompilationHooks(compilation)
                     .readResourceForScheme.for("https")
                     .tapAsync("EsmUrlPlugin", (resource, module, callback) => {
-                        const { https } = require("follow-redirects")
-                        return https.get(
-                            new URL(resource),
-                            { maxRedirects: 10 },
-                            (res) => {
-                                if (res.statusCode !== 200) {
-                                    res.destroy()
-                                    return callback(
-                                        new Error(
-                                            `https request status code = ${res.statusCode}`
-                                        )
-                                    )
-                                }
-
-                                const bufferArr = []
-
-                                res.on("data", (chunk) => {
-                                    bufferArr.push(chunk)
-                                })
-
-                                res.on("end", () => {
-                                    if (!res.complete) {
-                                        return callback(
-                                            new Error(
-                                                "https request was terminated"
-                                            )
-                                        )
-                                    }
-
-                                    callback(null, Buffer.concat(bufferArr))
-                                })
-                            }
-                        )
+                        get(resource)
+                            .then(({data}) => {
+                                callback(null, data)
+                            })
+                            .catch(error => {
+                                callback(error)
+                            })
                     })
             }
         )
@@ -107,7 +109,7 @@ class EsmUrlPlugin {
                         let baseUrl = parseUrl(request.context.issuer)
                         // If the issuer module is not a URL module, skip.
                         if (!baseUrl) return callback()
-
+                        // Use final URLs in case of redirects.
                         baseUrl = redirectCache[baseUrl.href] || baseUrl
 
                         if (needsRelativeResolution(request.request)) {
