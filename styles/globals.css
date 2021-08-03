@@ -23,7 +23,6 @@ a {
 .header h1 {
     height: auto; /* 241px */
     flex-shrink: 0;
-    width: 990px;
     overflow: visible;
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -34,6 +33,10 @@ a {
     letter-spacing: -2.5px;
     line-height: 1.1;
     text-align: center;
+    padding: 60px;
+}
+
+.header {
 }
 
 /* Fonts */
