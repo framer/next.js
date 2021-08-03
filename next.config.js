@@ -12,8 +12,8 @@ module.exports = {
     // Makes NextJS put framer assets to the right build folder.
     config.module.rules.push(
         {
-          issuer: /^https:\/\/framerusercontent.com\/modules\//,
-          test: /\.(png|jpg|jpeg|gif|webp|ico|bmp|svg)$/i,
+          issuer: /^https:\/\/(framerusercontent\.com\/modules\/|framer\.com\/m\/|framer\.dev\/m\/)/,
+          test: /\.(png|jpg|jpeg|gif|webp|ico|bmp|svg|ttf)$/i,
           type: 'asset/resource',
           generator: {
             filename: 'static/[hash][ext]',
