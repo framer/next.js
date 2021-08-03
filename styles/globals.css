@@ -33,7 +33,10 @@ a {
     letter-spacing: -2.5px;
     line-height: 1.1;
     text-align: center;
-    padding: 60px;
+    padding-top: 80px;
+    padding-bottom: 150px;
+    max-width: 990px;
+    margin: 0;
 }
 
 .header {
