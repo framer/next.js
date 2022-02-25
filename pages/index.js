@@ -13,18 +13,7 @@ export default function Home() {
             <Vocabcard
                 variant="card"
             />
-
-            import Vocabcard from "https://framer.com/m/vocabcard-DTEj.js@JCLkYdKFeDtqml4Zqyjw"
-            <Head>
-                <title>Framer</title>
-                <meta name="description" content="Modules" />
-                <link rel="icon" href="/favicon.png" />
-            </Head>
-
-            <Container>
-                <Toggle />
-                <Tip />
-            </Container>
         </>
+        
     )
 }
