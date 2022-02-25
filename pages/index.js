@@ -9,11 +9,9 @@ import Toggle from "https://framer.com/m/Toggle-B5iT.js@X94mtocAj5XithxLESme"
 export default function Home() {
     return (
         <>
-
             <Vocabcard
                 variant="card"
             />
         </>
-        
     )
 }
